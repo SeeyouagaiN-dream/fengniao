@@ -27,6 +27,7 @@ export default {
     { src: "~plugins/ElementUI" },
     { src: '~/plugins/localStorage.js', ssr: false },
     "@/plugins/moment",
+    '@/plugins/axios',
     
   ],
 

@@ -29,8 +29,8 @@
               <i class="iconfont iconpinglun"></i>
               <p>评论({{ totalList }})</p>
             </div>
-            <div class="ctrl-item">
-              <i class="iconfont iconstar1"></i>
+            <div class="ctrl-item" @click="handleCollection(theArticleList.id)">
+              <i :class="$store.state.post.isShow?iconobj[125]:iconobj[103]" ></i>
               <p>收藏</p>
             </div>
             <div class="ctrl-item">
@@ -38,7 +38,7 @@
               <p>分享</p>
             </div>
             <div class="ctrl-item">
-              <i class="iconfont iconding"></i>
+              <i class="iconfont iconding" ></i>
               <p>点赞</p>
             </div>
           </el-row>
@@ -133,8 +133,16 @@ export default {
   components: {
     Block
   },
+
   data() {
     return {
+      isShow:false,
+       iconobj: {
+          
+        '125': 'iconfont iconstar',
+        '103': 'iconfont iconstar1',
+      
+      },
       //  文章详情数据
       theArticleList: {},
       // 推荐文章列表
@@ -155,16 +163,26 @@ export default {
     this.getArticleList();
     this.getTheThemeList();
     this.getArticleReviews();
-    // alert(this.$store.state.user.userInfo.token)
+    alert(this.$store.state.post.isShow)
+    // this.isShow=this.$store.state.post.isShow
+   
   },
+  // watch: {
+  //   $route(){
+  //      this.$store.state.post.isShow
+  //   }
+  // },
   methods: {
     //获取文章详情数据
     getArticleList() {
       this.$axios
         .get("/posts", { params: { id: this.$route.query.id } })
         .then(res => {
-          // console.log(res.data.data)
+          console.log(res.data.data)
           this.theArticleList = res.data.data[0];
+          
+   
+      
         });
     },
     // 获取推荐文章列表
@@ -174,7 +192,7 @@ export default {
       });
 
       this.theThemelist = res.data;
-      console.log(res.data);
+      // console.log(res.data);
     },
     // 点击左边相关推荐
     RecommendedFor() {
@@ -192,7 +210,32 @@ export default {
       this.totalList = res.total;
       this.saveData=res.data
       console.log(res.data);
-    }
+    },
+    // 收藏
+handleCollection(id){
+   
+      
+ this.$axios({
+        url: "/posts/star",
+        params: { id },
+        headers: {
+          Authorization: `Bearer ${this.$store.state.user.userInfo.token}`
+        }
+      }).then(res=>{
+                
+          if (res.status === 200) {
+         
+       this.isShow=true
+    this.$store.commit('post/setShow', this.isShow)
+          this.$message({
+            type: "success",
+            message: "收藏成功"
+          });
+          
+      
+        }
+ })
+}
   }
 };
 </script>
@@ -212,6 +255,7 @@ export default {
 .mainlist p {
   padding: 10px 0 10px 0;
   color: #000;
+  
 }
 .mainlist span {
   margin-left: 9px;
