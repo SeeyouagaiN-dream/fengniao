@@ -56,10 +56,8 @@ computed: {
     methods:{
       // mapMutations辅助函数 第一种清除本地存储方法
        ...mapMutations({click:'user/clearItems'}),
-       ...mapMutations({clear:'post/clearAll'}),
         handleLogout(){
          this.click()
-         this.clear()
          this.$router.push('/')
         },
     // 第二种

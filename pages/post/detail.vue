@@ -30,7 +30,7 @@
               <p>评论({{ totalList }})</p>
             </div>
             <div class="ctrl-item" @click="handleCollection(theArticleList.id)">
-              <i :class="isShow?iconobj[125]:iconobj[103]" ></i>
+              <i :class="$store.state.post.isShow?iconobj[125]:iconobj[103]" ></i>
               <p>收藏</p>
             </div>
             <div class="ctrl-item">
@@ -155,8 +155,7 @@ export default {
       totalList: 0,
       // 评论数
       // 评论数据
-    saveData:[],
-    
+    saveData:[]
     };
     
   },
@@ -164,7 +163,7 @@ export default {
     this.getArticleList();
     this.getTheThemeList();
     this.getArticleReviews();
-    
+    alert(this.$store.state.post.isShow)
     // this.isShow=this.$store.state.post.isShow
    
   },
@@ -181,16 +180,9 @@ export default {
         .then(res => {
           console.log(res.data.data)
           this.theArticleList = res.data.data[0];
-           /*第一种点赞方法 用localStorage 
-          let collect =JSON.parse(localStorage.getItem('list')) || [] 
-          // console.log(collect)
-          let isCollect=collect.some(v=>v.id===this.theArticleList.id)
-          this.isShow=isCollect
-          */
-       
-         let collect=[...this.$store.state.post.thisList ]|| [] 
-         let isCollect=collect.some(v=>v.id===this.theArticleList.id)
-          this.isShow=isCollect
+          
+   
+      
         });
     },
     // 获取推荐文章列表
@@ -221,61 +213,28 @@ export default {
     },
     // 收藏
 handleCollection(id){
-  
-// 第2中  使用vuex
-  let collect = [...this.$store.state.post.thisList]||[] 
-  
-  
-       let index =collect.findIndex(v => v.id === id);
-       if(index===-1){
-       
-        collect.push(this.theArticleList)
-       
-         this.isShow=true
-       }else{
-         collect.splice(index, 1);
-          this.isShow=false
-       }
-         console.log(collect)
-       this.$store.commit('post/thingsList',collect)
-         
-
-
-
-  /*第一种点赞方法 用localStorage 
-    let collect =JSON.parse(localStorage.getItem('list')) || [] 
-  
-       let index =collect.findIndex(v => v.id === id);
-       if(index===-1){
-       
-        collect.push(this.theArticleList)
-       
-         this.isShow=true
-       }else{
-         collect.splice(index, 1);
-          this.isShow=false
-       }
-         console.log(collect)
-       
-         localStorage.setItem('list',JSON.stringify(collect))
-   */
-
-      //  this.$store.commit('post/thingsList',collect)
-//  this.$axios({
-//         url: "/posts/star",
-//         params: { id },
-//         headers: {
-//           Authorization: `Bearer ${this.$store.state.user.userInfo.token}`
-//         }
-//       }).then(res=>{
+   
+      
+ this.$axios({
+        url: "/posts/star",
+        params: { id },
+        headers: {
+          Authorization: `Bearer ${this.$store.state.user.userInfo.token}`
+        }
+      }).then(res=>{
                 
-//           if (res.status === 200) {
-//                this.$message({
-//             type: "success",
-//             message: "收藏成功"
-//           });
-//         }
-//  })
+          if (res.status === 200) {
+         
+       this.isShow=true
+    this.$store.commit('post/setShow', this.isShow)
+          this.$message({
+            type: "success",
+            message: "收藏成功"
+          });
+          
+      
+        }
+ })
 }
   }
 };
